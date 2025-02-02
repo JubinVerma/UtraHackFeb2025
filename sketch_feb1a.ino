@@ -29,7 +29,7 @@ const int trigPin = 11;
 const int echoPin = 12;
 #define MAX_DISTANCE 50
 
-NewPing sonar(trig_pin, echo_pin, MAX_DISTANCE);
+NewPing sonar(trigPin, echoPin, MAX_DISTANCE);
 
 
 void setup() {
@@ -68,22 +68,11 @@ void setup() {
   pinMode(echoPin, INPUT);
 }
 
-// Variables for Color Pulse Width Measurements
-int redPW = 0;
-int greenPW = 0;
-int bluePW = 0;
 
-void loop() {
 
-  maze();
-  char *color = getColor();
-  if (strncmp(color, "BLACK", 63)) {
-    stop();
-  }
-}
 
 char *getColor() {
-  char *s = malloc(64 * sizeof(char));
+  char *s = (char*)malloc(64 * sizeof(char));
   redPW = getRedPW();
   greenPW = getGreenPW();
   bluePW = getBluePW();
@@ -106,21 +95,22 @@ void maze() {
   // while it is not wall, run
   // exit while, run backward a couple tile
   // exit the function
-  char *color = getColor();  // fill param
+  /* *color = getColor();  // fill param
 
-  if (strncmp(color, "BLACK", 63)) {
-    goForward(255);
-  }
-  else if (strncmp(color, "BLUE", 63) {
-    turnLeft(100); 
+  if (strncmp(color, "BLUE", 63)) {
+    turn_left(255); 
+    delay(1000); 
   }
   else if (strncmp(color, "GREEN", 63)) {
-    turnRight(100); 
+    turn_right(255); 
+    delay(1000); 
   }
   else if (strncmp(color, "RED", 63)) {
-    uTurn(100);
-  }
- 
+    uTurn(255);
+    delay(2000); 
+  }*/
+  
+  
   // Delay 
   stop(); 
 
@@ -130,14 +120,14 @@ void maze() {
     isWall = detectWall(); 
   }
 
-  goBackward(); 
+  goBackward(255);
+  delay(200);  
   // delay
   stop(); 
-  free(color);
+  // free(color);
 }
 
 bool detectWall() {
-  int stop_dist = 20;
   return sonar.ping_cm() <= 20;
 }
 
@@ -205,19 +195,19 @@ void goBackward(int speed) {
   digitalWrite(in4, HIGH);
 }
 
-void turn_left(int speed) {
+void turn_right(int speed) {
   // set speed
-  analogWrite(en_a, speed);
-  analogWrite(en_b, speed);
+  analogWrite(enR, speed);
+  analogWrite(enL, speed);
   // set direction and turn on motors
   digitalWrite(in1, HIGH);
   digitalWrite(in2, LOW);
   digitalWrite(in3, HIGH);
   digitalWrite(in4, LOW);
 }
-void turn_right(int speed) {
-  analogWrite(en_a, speed);
-  analogWrite(en_b, speed);
+void turn_left(int speed) {
+  analogWrite(enR, speed);
+  analogWrite(enL, speed);
   digitalWrite(in1, LOW);
   digitalWrite(in2, HIGH);
   digitalWrite(in3, LOW);
@@ -226,16 +216,33 @@ void turn_right(int speed) {
 
 
 void uTurn(int speed) {
-  analogWrite(en_a, speed);
-  analogWrite(en_b, speed);
-  digitalWrite(in1, LOW);
-  digitalWrite(in2, LOW);
-  digitalWrite(in3, LOW);
-  digitalWrite(in4, HIGH);
-  // Delay Amount
-  delay(1000);
+  turn_left(speed); 
+  turn_left(speed); 
 }
 
 
 void captureFlag() {
+}
+
+void maze_nav() {
+  // 0 for north 
+  // 1 for east 
+  // 2 for south 
+  // 3 for west 
+  int dir = 0;  
+  // if turn left +1 % 4
+  // if turn right -1 % 4 
+  // if u turn + 2 % 4
+
+}
+
+void loop() {
+
+  if (!detectWall()) {
+    maze();
+  }
+  /*char *color = getColor();
+  if (strncmp(color, "BLACK", 63)) {
+    stop();
+  } */
 }
