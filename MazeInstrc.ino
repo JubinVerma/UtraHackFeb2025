@@ -96,7 +96,7 @@ int blueMax = 1326; // Blue maximum value
       strncat(color, "BLACK", 63); 
     }
     else if (redVal >= 250 && greenVal >= 270 && blueVal >= 270) {
-      strncat(color, "WHITE", 63)
+      strncat(color, "WHITE", 63);
     }
     else if (redVal >= 200) {
       strncat(color, "RED", 63);
@@ -124,7 +124,7 @@ int blueMax = 1326; // Blue maximum value
     // while it is not wall, run
     // exit while, run backward a couple tile
     // exit the function
-    *color = getColor();  // fill param
+    char *color = getColor();  // fill param
 
     if (strncmp(color, "BLUE", 63)) {
       turn_left(255); 
@@ -141,7 +141,9 @@ int blueMax = 1326; // Blue maximum value
     //stop(); 
 
     //bool isWall = false; 
-    goForward(255);
+    while(sonar.ping_cm()>20) {
+      goForward(255); 
+    }
       //isWall = detectWall();  
     Serial.print(sonar.ping_cm());
     Serial.print("\n");
@@ -253,93 +255,6 @@ int blueMax = 1326; // Blue maximum value
   }
 
 
-  struct node {
-    char color[64];
-    struct node *next; 
-    struct node *prev; 
-  };
-
-  void insert(struct node *front, char *color) {
-    if (front->color == NULL) {
-      strncat(front->color, color, 63);
-      front->next = (struct node*)malloc(sizeof(struct node*)); 
-      (front->next)->prev = front; 
-      return; 
-    }
-    struct node *curr = front; 
-    while (curr->color != NULL) {
-      
-      curr = curr->next; 
-    }
-    strncat(front->color, color, 63);
-    curr->next = (struct node*)malloc(sizeof(struct node*));
-    (curr->next)->prev = curr; 
-  }
-
-  void freeList(struct node *front) {
-    while (front->color != NULL) {
-
-      front = front->next; 
-      free(front->prev);
-    }
-    free(front); 
-
-  }
-
-  void remove(struct node *front, char *color) {
-    if (strncmp(front->color, color, 63)) {
-      
-      front = front->next; 
-      free(front->prev);
-      front->prev = NULL;
-    }
-  }
-
-  /*int length(struct node *front) {
-    int len = 0; 
-    struct *node curr = front; 
-    while (curr->color != NULL) {
-      curr = curr->next; 
-      len++; 
-    }
-    return len - 1; 
-  }
-
-  void captureFlag(char **colors, int size) {
-
-    char *color = getColor(); 
-    if (length <= 3) {
-      insert(head, color); 
-    }
-
-  }*/
-
-  void maze_nav() {
-    // 0 for north 
-    // 1 for east 
-    // 2 for south 
-    // 3 for west 
-    int dir = 0;  
-    // if turn left +1 % 4
-    // if turn right -1 % 4 
-    // if u turn + 2 % 4
-    goForward(255); 
-    delay(2000); 
-    int ran = random(2);
-    if (ran == 0) {
-      dir++; 
-      
-      turn_left(255); 
-    }
-    else {
-      turn_right(255); 
-      dir--; 
-    }
-    dir = dir % 4; 
-
-  }
-
-  struct node *head = (struct node*)malloc(sizeof(struct node*)); 
 
   void loop() {
     
@@ -347,7 +262,5 @@ int blueMax = 1326; // Blue maximum value
     if (!detectWall() || !strncmp(color, "BLACK", 63)) {
       maze();
     }
-    //maze();
-
     
   }
