@@ -301,7 +301,7 @@ struct node *head = (struct node*)malloc(sizeof(struct node*));
 
 void loop() {
   
-
+//
   if (!detectWall()) {
     maze();
   }
