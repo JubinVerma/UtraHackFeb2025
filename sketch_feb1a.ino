@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 
+
 // Define color sensor pins
 #define S0 0
 #define S1 1
@@ -221,7 +222,53 @@ void uTurn(int speed) {
 }
 
 
-void captureFlag() {
+struct node {
+  char color[64];
+  struct node *next; 
+  struct node *prev; 
+};
+
+void insert(struct node *front, char *color) {
+  if (front->color == NULL) {
+    strncat(front->color, color, 63);
+    front->next = (struct node*)malloc(sizeof(struct node*)); 
+    (front->next)->prev = front; 
+    return; 
+  }
+  struct node *curr = front; 
+  while (curr->color != NULL) {
+    
+    curr = curr->next; 
+  }
+  strncat(front->color, color, 63);
+  curr->next = (struct node*)malloc(sizeof(struct node*));
+  (curr->next)->prev = curr; 
+}
+
+void freeList(struct node *front) {
+  while (front->color != NULL) {
+
+    front = front->next; 
+    free(front->prev);
+  }
+  free(front); 
+
+}
+
+void remove(struct node *front, char *color) {
+  if (strncmp(front->color, color, 63)) {
+    
+    front = front->next; 
+    free(front->prev);
+    front->prev = NULL;
+  }
+}
+
+void captureFlag(char **colors, int size) {
+  char *color = getColor(); 
+  insert(head, color); 
+
+
 }
 
 void maze_nav() {
@@ -233,10 +280,26 @@ void maze_nav() {
   // if turn left +1 % 4
   // if turn right -1 % 4 
   // if u turn + 2 % 4
+  goForward(255); 
+  delay(2000); 
+  int ran = random(2);
+  if (ran == 0) {
+    dir++; 
+    
+    turn_left(255); 
+  }
+  else {
+    turn_right(255); 
+    dir--; 
+  }
+  dir = dir % 4; 
 
 }
 
+struct node *head = (struct node*)malloc(sizeof(struct node*)); 
+
 void loop() {
+  
 
   if (!detectWall()) {
     maze();
