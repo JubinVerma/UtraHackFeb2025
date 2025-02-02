@@ -31,7 +31,7 @@ const int echoPin = 12;
 #define MAX_DISTANCE 50
 
 NewPing sonar(trigPin, echoPin, MAX_DISTANCE);
-
+// test 
 
 void setup() {
 
@@ -267,6 +267,7 @@ void remove(struct node *front, char *color) {
 void captureFlag(char **colors, int size) {
   char *color = getColor(); 
   insert(head, color); 
+
 
 
 }
